@@ -8,11 +8,12 @@ function Page() {
   const [projekty, setProjekty] = useState<any[]>([]);
   const [sekcje, setSekcje] = useState<any[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<number | "">("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: { "image/*": [] },
   });
 
-  // Pobranie projektów i sekcji z API
   useEffect(() => {
     fetch("http://localhost:8000/api/projekty/")
       .then(res => res.json())
@@ -25,12 +26,83 @@ function Page() {
       .catch(err => console.error(err));
   }, []);
 
+const handleGenerate = async () => {
+  setErrors({});
+  if (!acceptedFiles[0] || !selectedGroupId) {
+    setErrors({ general: ["Wybierz plik i grupę!"] });
+    return;
+  }
+
+  setIsGenerating(true);
+  try {
+    const formData = new FormData();
+    formData.append("file", acceptedFiles[0]);
+
+    const uploadRes = await fetch(
+      "http://localhost:8000/api/certyfikaty-generator/upload-tlo/",
+      {
+        method: "POST",
+        headers: {
+          "X-CSRFTOKEN": "1WQie21ktkiQVbMaTEJwKVhELEge1MSIkyfSpW2ouMvKeqDSQYzyubtGLZiHl4ns",
+        },
+        body: formData,
+      }
+    );
+
+    const uploadData = await uploadRes.json();
+    if (!uploadRes.ok) {
+      setErrors(uploadData);
+      return;
+    }
+
+    const tempFileName = uploadData.temp_file_name || acceptedFiles[0].name;
+
+    const generateRes = await fetch(
+      "http://localhost:8000/api/certyfikaty-generator/generuj/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFTOKEN": "1WQie21ktkiQVbMaTEJwKVhELEge1MSIkyfSpW2ouMvKeqDSQYzyubtGLZiHl4ns",
+        },
+        body: JSON.stringify({
+          temp_file_name: tempFileName,
+          grupa_id: selectedGroupId,
+          typ_grupy: groupType,
+        }),
+      }
+    );
+
+    if (!generateRes.ok) {
+      const errorData = await generateRes.json();
+      setErrors(errorData);
+      return;
+    }
+
+    const pdfBlob = await generateRes.blob();
+    const url = URL.createObjectURL(pdfBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `certyfikat_${selectedGroupId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+
+
+  } catch (err) {
+    console.error(err);
+    setErrors({ general: ["Wystąpił błąd sieciowy"] });
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+
   return (
     <div className='bg-white text-[#6D5BD0] h-screen flex flex-col border border-gray-300 rounded-lg'>
-      
       <div className="flex-1 overflow-auto grid grid-cols-2 gap-6 p-8">
 
-        {/* KROK 1 – Dodaj certyfikat */}
         <div className='bg-white flex flex-col rounded-lg border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300'>
           <div className='p-4'>
             <p className='pb-2 font-semibold text-lg'>Krok 1:</p>
@@ -55,19 +127,13 @@ function Page() {
               </div>
             )}
           </div>
-
-          <div className='flex justify-end m-4'>
-            <Image src="/check.png" alt="Search Icon" width={30} height={30} />
-          </div>
         </div>
 
-        {/* KROK 2 – Wybierz grupę */}
         <div className='bg-white rounded-lg border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full'>
           <div className='p-4'>
             <p className='pb-2 font-semibold text-lg'>Krok 2:</p>
             <p className='font-semibold text-lg'>Wybierz dla której grupy chcesz wygenerować certyfikat</p>
 
-            {/* Dropdown 1 – Typ grupy */}
             <div className="mt-4">
               <label className="text-sm text-[#6E6893]">Typ grupy</label>
               <select
@@ -83,7 +149,6 @@ function Page() {
               </select>
             </div>
 
-            {/* Dropdown 2 – Konkretny projekt/sekcja */}
             <div className="mt-4">
               <label className="text-sm text-[#6E6893]">
                 {groupType === "projekt" ? "Projekt" : "Sekcja"}
@@ -104,19 +169,28 @@ function Page() {
                   </option>
                 ))}
               </select>
+              {errors.grupa_id && <p className="text-red-500 text-sm mt-1">{errors.grupa_id.join(" ")}</p>}
             </div>
+
+            {errors.general && (
+              <p className="text-red-500 text-sm mt-2">{errors.general.join(" ")}</p>
+            )}
+
           </div>
 
           <div className='flex justify-end mt-auto m-4'>
-            <Image src="/check.png" alt="Search Icon" width={30} height={30} />
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="bg-[#6D5BD0] hover:bg-[#5c4bb0] text-white px-4 py-2 rounded-md transition-colors disabled:opacity-50"
+            >
+              {isGenerating ? "Generowanie..." : "Generuj certyfikat"}
+            </button>
           </div>
         </div>
 
       </div>
-
-      {/* Stopka */}
       <div className="px-4 py-4 bg-[#F4F2FF] flex items-center text-sm text-[#6E6893] gap-15 border-t border-gray-300 rounded-b-lg">
-        {/* Można tu dodać przyciski generowania certyfikatu */}
       </div>
 
     </div>
