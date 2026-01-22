@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 
 const navLinks = [
-  { name: 'Baza członków', href: '/' },
+  { name: 'Baza członków', href: '/members' },
   { name: 'Obecność', href: '/presence' },
   { name: 'Budżet', href: '/budget' },
   { name: 'Baza partnerów', href: '/partners' },
