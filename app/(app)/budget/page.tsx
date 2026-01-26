@@ -6,6 +6,7 @@ import Image from "next/image";
 import Result from "@/components/budget/result";
 import AddModal from "@/components/budget/addModal";
 import DeleteModal from "@/components/budget/deleteModal";
+import { apiUrl } from "@/lib/api";
 
 export default function Page() {
   const [searchText, setSearchText] = useState("");
@@ -26,7 +27,7 @@ export default function Page() {
 
   const loadPrzychody = async (pageNumber = 1) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/przychody/?page=${pageNumber}`);
+      const res = await fetch(apiUrl(`/api/przychody/?page=${pageNumber}`));
       const data = await res.json();
       setPrzychody(data.results || []);
       setNextPagePrzy(data.next);
@@ -39,7 +40,7 @@ export default function Page() {
 
   const loadWydatki = async (pageNumber = 1) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/wydatki/?page=${pageNumber}`);
+      const res = await fetch(apiUrl(`/api/wydatki/?page=${pageNumber}`));
       const data = await res.json();
       setWydatki(data.results || []);
       setNextPageWyd(data.next);
@@ -66,8 +67,8 @@ export default function Page() {
 
     const endpoint =
       deleteType === "przychod"
-        ? `http://localhost:8000/api/przychody/${budgetItemToDelete.id}/`
-        : `http://localhost:8000/api/wydatki/${budgetItemToDelete.id}/`;
+        ? apiUrl(`/api/przychody/${budgetItemToDelete.id}/`)
+        : apiUrl(`/api/wydatki/${budgetItemToDelete.id}/`);
 
     await fetch(endpoint, { method: "DELETE" });
 

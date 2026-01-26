@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Result from '@/components/members/result';
 import AddModal from '@/components/members/addModal';
 import DeleteModal from '@/components/members/deleteModal';
+import { apiUrl } from '@/lib/api';
 
 function page() {
   const [members, setMembers] = useState<any[]>([]);
@@ -24,7 +25,7 @@ function page() {
   const loadMembers = async (pageNumber = 1) => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/lista-czlonkow/?page=${pageNumber}`
+        apiUrl(`/api/lista-czlonkow/?page=${pageNumber}`)
       );
       const data = await res.json();
 
@@ -63,7 +64,7 @@ function page() {
 
   const handleEdit = async (member: any) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/czlonkowie/${member.id}/`);
+      const res = await fetch(apiUrl(`/api/czlonkowie/${member.id}/`));
       const fullMember = await res.json();
 
       setSelectedMember(fullMember);
@@ -83,7 +84,7 @@ const handleDeleteConfirm = async () => {
   if (!memberToDelete) return;
 
   try {
-    const res = await fetch(`http://localhost:8000/api/czlonkowie/${memberToDelete.id}/`, {
+    const res = await fetch(apiUrl(`/api/czlonkowie/${memberToDelete.id}/`), {
       method: "DELETE",
     });
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useDropzone } from "react-dropzone";
+import { apiUrl } from '@/lib/api';
 
 function Page() {
   const [groupType, setGroupType] = useState<"projekt" | "sekcja">("projekt");
@@ -15,12 +16,12 @@ function Page() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/projekty/")
+    fetch(apiUrl("/api/projekty/"))
       .then(res => res.json())
       .then(data => setProjekty(data.results))
       .catch(err => console.error(err));
 
-    fetch("http://localhost:8000/api/sekcje/")
+    fetch(apiUrl("/api/sekcje/"))
       .then(res => res.json())
       .then(data => setSekcje(data.results))
       .catch(err => console.error(err));
@@ -39,7 +40,7 @@ const handleGenerate = async () => {
     formData.append("file", acceptedFiles[0]);
 
     const uploadRes = await fetch(
-      "http://localhost:8000/api/certyfikaty-generator/upload-tlo/",
+      apiUrl("/api/certyfikaty-generator/upload-tlo/"),
       {
         method: "POST",
         headers: {
@@ -58,7 +59,7 @@ const handleGenerate = async () => {
     const tempFileName = uploadData.temp_file_name || acceptedFiles[0].name;
 
     const generateRes = await fetch(
-      "http://localhost:8000/api/certyfikaty-generator/generuj/",
+      apiUrl("/api/certyfikaty-generator/generuj/"),
       {
         method: "POST",
         headers: {
