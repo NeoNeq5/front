@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { apiUrl } from '@/lib/api';
 
 type Spotkanie = {
   id: number;
@@ -36,7 +37,7 @@ function Result({
   useEffect(() => {
     const fetchAllPresence = async () => {
       try {
-        let url = "http://localhost:8000/api/widok-obecnosci/";
+        let url = apiUrl("/api/widok-obecnosci/");
         const allResults: any[] = [];
 
         while (url) {
@@ -71,7 +72,7 @@ function Result({
 
 
   const fetchAllWidokObecnosci = async () => {
-  let url = "http://localhost:8000/api/widok-obecnosci/";
+  let url = apiUrl("/api/widok-obecnosci/");
   const allResults: any[] = [];
 
   while (url) {
@@ -107,7 +108,7 @@ const togglePresence = async (dataSpotkania: string) => {
     const newValue = !record.czy_obecny;
 
     const res = await fetch(
-      `http://localhost:8000/api/obecnosci/${record.id}/`,
+      apiUrl(`/api/obecnosci/${record.id}/`),
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

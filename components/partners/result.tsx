@@ -1,5 +1,6 @@
 import React, { useEffect, useState }  from 'react'
 import Image from 'next/image';
+import { apiUrl } from '@/lib/api';
 
 type Props = {
   partner: {
@@ -29,7 +30,7 @@ function result({ partner, onEdit, onDelete }: Props) {
   
   useEffect(() => {
     const fetchStatusy = async () => {
-      const res = await fetch("http://localhost:8000/api/slownik-statusow/");
+      const res = await fetch(apiUrl("/api/slownik-statusow/"));
       const data = await res.json();
       setStatusy(data.results);
     };

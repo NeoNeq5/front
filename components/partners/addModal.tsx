@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { apiUrl } from '@/lib/api';
 
 type ModalProps = {
   onClose: () => void;
@@ -51,7 +52,7 @@ function AddPartnerModal({ onClose, mode, partner }: ModalProps) {
   const fetchCzlonkowie = async () => {
     try {
       setIsLoadingCzlonkowie(true);
-      const res = await fetch("http://localhost:8000/api/czlonkowie/");
+      const res = await fetch(apiUrl("/api/czlonkowie/"));
       const data = await res.json();
       setCzlonkowie(data.results);
     } finally {
@@ -62,7 +63,7 @@ function AddPartnerModal({ onClose, mode, partner }: ModalProps) {
   const fetchStatusy = async () => {
     try {
       setIsLoadingStatusy(true);
-      const res = await fetch("http://localhost:8000/api/slownik-statusow/");
+      const res = await fetch(apiUrl("/api/slownik-statusow/"));
       const data = await res.json();
       setStatusy(data.results);
     } finally {
@@ -76,7 +77,7 @@ function AddPartnerModal({ onClose, mode, partner }: ModalProps) {
     try {
       setIsLoading(true);
       setErrors({});
-      const res = await fetch("http://localhost:8000/api/partnerzy/", {
+      const res = await fetch(apiUrl("/api/partnerzy/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -95,7 +96,7 @@ function AddPartnerModal({ onClose, mode, partner }: ModalProps) {
       setIsLoading(true);
       setErrors({});
       const res = await fetch(
-        `http://localhost:8000/api/partnerzy/${partner.id}/`,
+        apiUrl(`/api/partnerzy/${partner.id}/`),
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

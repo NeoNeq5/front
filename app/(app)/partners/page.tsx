@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Result from '@/components/partners/result';
 import AddModal from '@/components/partners/addModal';
 import DeleteModal from '@/components/partners/deleteModal';
+import { apiUrl } from '@/lib/api';
 
 function page() {
   const [partners, setPartners] = useState<any[]>([]);
@@ -21,7 +22,7 @@ function page() {
     const loadPartners = async (pageNumber = 1) => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/partnerzy/?page=${pageNumber}`
+        apiUrl(`/api/partnerzy/?page=${pageNumber}`)
       );
       const data = await res.json();
 
@@ -48,7 +49,7 @@ function page() {
 
   const handleEdit = async (partner: any) => {
     const res = await fetch(
-      `http://localhost:8000/api/partnerzy/${partner.id}/`
+      apiUrl(`/api/partnerzy/${partner.id}/`)
     );
     const fullPartner = await res.json();
     setSelectedPartner(fullPartner);
@@ -65,7 +66,7 @@ function page() {
     if (!partnerToDelete) return;
 
     await fetch(
-      `http://localhost:8000/api/partnerzy/${partnerToDelete.id}/`,
+      apiUrl(`/api/partnerzy/${partnerToDelete.id}/`),
       { method: "DELETE" }
     );
     setPartners(prev => prev.filter(p => p.id !== partnerToDelete.id));

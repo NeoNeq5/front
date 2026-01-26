@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image';
 import Result from '@/components/presence/result';
 import AddModal from '@/components/presence/addModal';
+import { apiUrl } from '@/lib/api';
 
 
 
@@ -31,7 +32,7 @@ function page() {
   const loadMembers = async (pageNumber = 1) => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/lista-czlonkow/?page=${pageNumber}`
+        apiUrl(`/api/lista-czlonkow/?page=${pageNumber}`)
       );
       const data = await res.json();
 
@@ -46,7 +47,7 @@ function page() {
 
   const loadSpotkania = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/spotkania/");
+      const res = await fetch(apiUrl("/api/spotkania/"));
       const data = await res.json();
 
       // jeśli masz paginację DRF

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React from 'react'
 import { useState, useEffect } from 'react';
 import Select from '../select';
+import { apiUrl } from '@/lib/api';
 
 type ModalProps = {
   onClose: () => void
@@ -65,7 +66,7 @@ function addModal({onClose}: ModalProps) {
     try {
       setIsLoading(true);
       setErrors({});
-      const res = await fetch("http://localhost:8000/api/przychody/", {
+      const res = await fetch(apiUrl("/api/przychody/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payloadPrzychod),
@@ -83,7 +84,7 @@ function addModal({onClose}: ModalProps) {
     try {
       setIsLoading(true);
       setErrors({});
-      const res = await fetch("http://localhost:8000/api/wydatki/", {
+      const res = await fetch(apiUrl("/api/wydatki/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payloadWydatek),
@@ -99,7 +100,7 @@ function addModal({onClose}: ModalProps) {
   const fetchCzlonkowie = async () => {
     try {
       setIsLoadingCzlonkowie(true);
-      const res = await fetch("http://localhost:8000/api/czlonkowie/");
+      const res = await fetch(apiUrl("/api/czlonkowie/"));
       const data = await res.json();
       setCzlonkowie(data.results);
     } finally {
@@ -110,7 +111,7 @@ function addModal({onClose}: ModalProps) {
   const fetchPartnerzy = async () => {
     try {
       setIsLoadingPartnerzy(true);
-      const res = await fetch("http://localhost:8000/api/partnerzy/");
+      const res = await fetch(apiUrl("/api/partnerzy/"));
       const data = await res.json();
       setPartnerzy(data.results);
     } finally {

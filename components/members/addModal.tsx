@@ -4,6 +4,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import Select from '../select';
 import AddModal2 from './addModal2';
+import { apiUrl } from '@/lib/api';
 
 type ModalProps = {
   onClose: () => void;
@@ -71,7 +72,7 @@ const addMember = async () => {
       projekt: selectedProjekt,
     };
 
-    const res = await fetch("http://localhost:8000/api/czlonkowie/", {
+    const res = await fetch(apiUrl("/api/czlonkowie/"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -96,7 +97,7 @@ const addMember = async () => {
 
   const addKierunek = async (nazwa: string, opis: string) => {
   try {
-    const res = await fetch("http://localhost:8000/api/kierunki/", {
+    const res = await fetch(apiUrl("/api/kierunki/"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -120,7 +121,7 @@ const addMember = async () => {
 
 const addSekcja = async (nazwa: string, opis: string) => {
   try {
-    const res = await fetch("http://localhost:8000/api/sekcje/", {
+    const res = await fetch(apiUrl("/api/sekcje/"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +142,7 @@ const addSekcja = async (nazwa: string, opis: string) => {
 
   const addProjekt = async (nazwa: string, opis: string) => {
     try {
-      const res = await fetch("http://localhost:8000/api/projekty/", {
+      const res = await fetch(apiUrl("/api/projekty/"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +181,7 @@ const addSekcja = async (nazwa: string, opis: string) => {
     };
 
     const res = await fetch(
-      `http://localhost:8000/api/czlonkowie/${member.id}/`,
+      apiUrl(`/api/czlonkowie/${member.id}/`),
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -208,14 +209,14 @@ const addSekcja = async (nazwa: string, opis: string) => {
 
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/kierunki/")
+    fetch(apiUrl("/api/kierunki/"))
       .then(res => res.json())
       .then(data => setKierunki(data.results))
       .catch((err) => console.error("Błąd pobierania kierunków:", err));
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/projekty/")
+    fetch(apiUrl("/api/projekty/"))
       .then(res => res.json())
       .then(data => setProjekty(data.results))
       .catch(err => console.error(err));
@@ -223,7 +224,7 @@ const addSekcja = async (nazwa: string, opis: string) => {
 
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/sekcje/")
+    fetch(apiUrl("/api/sekcje/"))
       .then(res => res.json())
       .then(data => setSekcje(data.results))
       .catch(err => console.error(err));

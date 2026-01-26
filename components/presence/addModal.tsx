@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { apiUrl } from '@/lib/api';
 
 type ModalProps = {
   onClose: () => void;
@@ -35,7 +36,7 @@ function AddMeetingModal({ onClose }: ModalProps) {
   const fetchCzlonkowie = async () => {
     try {
       setIsLoadingCzlonkowie(true);
-      const res = await fetch("http://localhost:8000/api/czlonkowie/");
+      const res = await fetch(apiUrl("/api/czlonkowie/"));
       const data = await res.json();
       setCzlonkowie(data.results);
     } finally {
@@ -48,7 +49,7 @@ function AddMeetingModal({ onClose }: ModalProps) {
       setIsLoading(true);
       setErrors({});
 
-      const res = await fetch("http://localhost:8000/api/spotkania/", {
+      const res = await fetch(apiUrl("/api/spotkania/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
